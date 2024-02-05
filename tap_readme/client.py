@@ -7,7 +7,7 @@ from urllib.parse import parse_qsl
 
 from requests.auth import HTTPBasicAuth
 from singer_sdk import RESTStream
-from singer_sdk.pagination import BaseAPIPaginator, BaseHATEOASPaginator
+from singer_sdk.pagination import BaseHATEOASPaginator
 
 if t.TYPE_CHECKING:
     from urllib.parse import ParseResult
@@ -20,7 +20,7 @@ class ReadMePaginator(BaseHATEOASPaginator):
 
     def get_next_url(self, response: Response) -> str | None:
         """Return the next page URL from a response. If no next page, return None."""
-        return response.links.get("next", {}).get("url")
+        return response.links.get("next", {}).get("url")  # type: ignore[no-any-return]
 
 
 class ReadMeStream(RESTStream[t.Any]):
@@ -70,6 +70,6 @@ class ReadMeStream(RESTStream[t.Any]):
 
         return params
 
-    def get_new_paginator(self) -> BaseAPIPaginator:
+    def get_new_paginator(self) -> ReadMePaginator:
         """Get a new paginator object."""
         return ReadMePaginator()

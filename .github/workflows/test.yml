@@ -53,9 +53,7 @@ jobs:
 
     - name: Run tests
       env:
-        TAP_README_USERNAME: ${{ secrets.TAP_README_USERNAME }}
-        TAP_README_PASSWORD: ${{ secrets.TAP_README_PASSWORD }}
-        TAP_README_START_DATE: ${{ secrets.TAP_README_START_DATE }}
+        TAP_README_API_KEY: ${{ secrets.TAP_README_API_KEY }}
       run: |
         hatch run ${{ matrix.script }}
 
