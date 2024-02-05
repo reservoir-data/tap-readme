@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import typing as t
+
 from singer_sdk import typing as th
 
 from tap_readme.client import ReadMeStream
@@ -28,7 +30,11 @@ class Categories(ReadMeStream):
         th.Property("_id", th.StringType),
     ).to_dict()
 
-    def get_child_context(self, record: dict, context: dict | None) -> dict | None:  # noqa: ARG002
+    def get_child_context(
+        self,
+        record: dict[str, t.Any],
+        context: dict[str, t.Any] | None,  # noqa: ARG002
+    ) -> dict[str, t.Any] | None:
         """Return a dictionary of child context data."""
         return {
             "category_slug": record["slug"],
@@ -90,20 +96,26 @@ class Changelogs(ReadMeStream):
 
     name = "changelogs"
     path = "/v1/changelogs"
-    primary_keys = ("id",)
+    primary_keys = ("_id",)
     replication_key = None
 
     schema = th.PropertiesList(
-        th.Property("metadata", th.ObjectType(
-            th.Property("image", th.ArrayType(th.StringType)),
-            th.Property("title", th.StringType),
-            th.Property("description", th.StringType),
-            th.Property("keywords", th.StringType),
-        )),
-        th.Property("algolia", th.ObjectType(
-            th.Property("recordCount", th.IntegerType),
-            th.Property("publishPending", th.BooleanType),
-        )),
+        th.Property(
+            "metadata",
+            th.ObjectType(
+                th.Property("image", th.ArrayType(th.StringType)),
+                th.Property("title", th.StringType),
+                th.Property("description", th.StringType),
+                th.Property("keywords", th.StringType),
+            ),
+        ),
+        th.Property(
+            "algolia",
+            th.ObjectType(
+                th.Property("recordCount", th.IntegerType),
+                th.Property("publishPending", th.BooleanType),
+            ),
+        ),
         th.Property("title", th.StringType),
         th.Property("slug", th.StringType),
         th.Property("body", th.StringType),
