@@ -13,6 +13,7 @@ if t.TYPE_CHECKING:
     from urllib.parse import ParseResult
 
     from requests import Response
+    from singer_sdk.helpers.types import Context
 
 
 class ReadMePaginator(BaseHATEOASPaginator):
@@ -51,7 +52,7 @@ class ReadMeStream(RESTStream[t.Any]):
 
     def get_url_params(
         self,
-        context: dict[str, t.Any] | None,  # noqa: ARG002
+        context: Context | None,  # noqa: ARG002
         next_page_token: ParseResult | None,
     ) -> dict[str, t.Any]:
         """Get URL query parameters.
