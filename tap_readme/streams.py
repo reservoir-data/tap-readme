@@ -8,6 +8,9 @@ from singer_sdk import typing as th
 
 from tap_readme.client import ReadMeStream
 
+if t.TYPE_CHECKING:
+    from singer_sdk.helpers.types import Context
+
 
 class Categories(ReadMeStream):
     """Categories stream."""
@@ -33,7 +36,7 @@ class Categories(ReadMeStream):
     def get_child_context(
         self,
         record: dict[str, t.Any],
-        context: dict[str, t.Any] | None,  # noqa: ARG002
+        context: Context | None,  # noqa: ARG002
     ) -> dict[str, t.Any] | None:
         """Return a dictionary of child context data."""
         return {
