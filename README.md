@@ -1,4 +1,4 @@
-# `tap-readme`
+# tap-readme
 
 Singer tap for ReadMe.com.
 
@@ -30,11 +30,11 @@ A full list of supported settings and capabilities is available by running: `tap
 
 ## Supported Python Versions
 
-* 3.8
 * 3.9
 * 3.10
 * 3.11
 * 3.12
+* 3.13
 
 ### Source Authentication and Authorization
 
