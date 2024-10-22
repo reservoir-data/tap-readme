@@ -89,7 +89,7 @@ features = [
 check = "mypy --strict {args:tap_readme tests}"
 
 [tool.ruff]
-target-version = "py38"
+target-version = "py39"
 
 line-length = 88
 lint.select = [
