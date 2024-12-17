@@ -7,12 +7,15 @@ jobs:
   build:
     name: Build wheel and sdist
     runs-on: ubuntu-latest
+    outputs:
+      package_version: ${{ steps.baipp.outputs.package_version }}
     steps:
     - uses: actions/checkout@v4
       with:
         fetch-depth: 0
         ref: ${{ github.ref }}
     - uses: hynek/build-and-inspect-python-package@v2
+      id: baipp
 
   publish:
     name: Publish to PyPI
@@ -24,7 +27,7 @@ jobs:
       id-token: write
     environment:
       name: pypi
-      url: https://pypi.org/p/tap-readme
+      url: https://pypi.org/project/tap-readme/${{ needs.build.outputs.package_version }}
 
     steps:
     - uses: actions/download-artifact@v4
