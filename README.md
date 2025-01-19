@@ -57,21 +57,15 @@ tap-readme --config CONFIG --discover > ./catalog.json
 ### Initialize your Development Environment
 
 ```bash
-pipx install hatch
+uv tool install --with tox-uv tox
 ```
 
 ### Create and Run Tests
 
-Run integration tests:
+Run all tests:
 
 ```bash
-hatch run tests:integration
-```
-
-You can also test the `tap-tap-readme` CLI interface directly:
-
-```bash
-hatch run sync:console -- --about --format=json
+tox run-parallel
 ```
 
 ### Testing with [Meltano](https://www.meltano.com)
