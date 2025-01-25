@@ -941,7 +941,7 @@ dev = [
     { name = "mypy", specifier = "~=1.14.0" },
     { name = "pytest", specifier = "~=8.0" },
     { name = "singer-sdk", extras = ["testing"] },
-    { name = "types-requests", specifier = "~=2.32.0" },
+    { name = "types-requests" },
 ]
 testing = [
     { name = "deptry", specifier = ">=0.12" },
@@ -950,7 +950,7 @@ testing = [
 ]
 typing = [
     { name = "mypy", specifier = "~=1.14.0" },
-    { name = "types-requests", specifier = "~=2.32.0" },
+    { name = "types-requests" },
 ]
 
 [[package]]
