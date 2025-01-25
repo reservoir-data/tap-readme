@@ -14,7 +14,8 @@ keywords = [
   "ReadMe.com",
   "singer.io",
 ]
-license.file = "LICENSE"
+license = "Apache-2.0"
+license-files = [ "LICENSE" ]
 maintainers = [
   { name = "Edgar Ramírez-Mondragón", email = "edgarrmondragon@hey.com" },
 ]
@@ -23,6 +24,7 @@ authors = [
 ]
 requires-python = ">=3.9"
 classifiers = [
+  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
