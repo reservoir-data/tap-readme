@@ -39,9 +39,9 @@ dependencies = [
   "requests~=2.32.0",
   "singer-sdk~=0.48.1",
 ]
-urls.Documentation = "https://github.com/edgarrmondragon/tap-readme#readme"
-urls.Homepage = "https://github.com/edgarrmondragon/tap-readme"
-urls.Repository = "https://github.com/edgarrmondragon/tap-readme"
+urls.Documentation = "https://github.com/reservoir-data/tap-readme#readme"
+urls.Homepage = "https://github.com/reservoir-data/tap-readme"
+urls.Repository = "https://github.com/reservoir-data/tap-readme"
 scripts."tap-readme" = "tap_readme.tap:TapReadMe.cli"
 
 [dependency-groups]
