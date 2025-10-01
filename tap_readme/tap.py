@@ -2,14 +2,20 @@
 
 from __future__ import annotations
 
-import typing as t
+import sys
+from typing import TYPE_CHECKING
 
 from singer_sdk import Stream, Tap
 from singer_sdk import typing as th
 
 from tap_readme import streams
 
-if t.TYPE_CHECKING:
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
+
+if TYPE_CHECKING:
     from urllib.parse import ParseResult
 
     from singer_sdk.streams import RESTStream
@@ -37,10 +43,6 @@ class TapReadMe(Tap):
         ),
     ).to_dict()
 
+    @override
     def discover_streams(self) -> list[Stream]:
-        """Return a list of discovered streams.
-
-        Returns:
-            A list of ReadMe.com streams.
-        """
         return [stream_class(tap=self) for stream_class in STREAM_TYPES]
