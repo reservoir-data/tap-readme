@@ -2,13 +2,19 @@
 
 from __future__ import annotations
 
-import typing as t
+import sys
+from typing import TYPE_CHECKING, Any
 
 from singer_sdk import typing as th
 
 from tap_readme.client import ReadMeStream
 
-if t.TYPE_CHECKING:
+if sys.version_info >= (3, 12):
+    from typing import override
+else:
+    from typing_extensions import override
+
+if TYPE_CHECKING:
     from singer_sdk.helpers.types import Context
 
 
@@ -33,12 +39,12 @@ class Categories(ReadMeStream):
         th.Property("_id", th.StringType),
     ).to_dict()
 
+    @override
     def get_child_context(
         self,
-        record: dict[str, t.Any],
-        context: Context | None,  # noqa: ARG002
-    ) -> dict[str, t.Any] | None:
-        """Return a dictionary of child context data."""
+        record: dict[str, Any],
+        context: Context | None,
+    ) -> dict[str, Any] | None:
         return {
             "category_slug": record["slug"],
         }

@@ -37,7 +37,8 @@ dynamic = [
 ]
 dependencies = [
   "requests~=2.32.0",
-  "singer-sdk~=0.49.1",
+  "singer-sdk~=0.50.0",
+  "typing-extensions>=4.15; python_full_version<'3.12'",
 ]
 urls.Documentation = "https://github.com/reservoir-data/tap-readme#readme"
 urls.Homepage = "https://github.com/reservoir-data/tap-readme"
@@ -56,6 +57,7 @@ testing = [
 ]
 typing = [
   "mypy~=1.18.2",
+  "ty>=0.0.1a21",
   "types-requests",
 ]
 
@@ -94,7 +96,7 @@ lint.pydocstyle.convention = "google"
 [tool.deptry.package_module_name_map]
 mypy = "mypy"
 pytest = "pytest"
-tap-readme = "tap_readme"
+ty = "ty"
 types-requests = "requests"
 
 [tool.deptry.per_rule_ignores]
@@ -140,7 +142,10 @@ commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ]
 
 [tool.tox.env.typing]
 dependency_groups = [ "testing", "typing" ]
-commands = [ [ "mypy", "--strict", { replace = "posargs", default = [ "tap_readme", "tests" ], extend = true } ] ]
+commands = [
+  [ "mypy", "--strict", "tap_readme", "tests" ],
+  [ "ty", "check" ],
+]
 
 [tool.mypy]
 warn_redundant_casts = true
@@ -159,4 +164,4 @@ module = [
 [tool.uv]
 prerelease = "allow"
 preview = true
-required-version = ">=0.5.19"
+required-version = ">=0.8"
