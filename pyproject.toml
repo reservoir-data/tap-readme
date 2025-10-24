@@ -64,6 +64,11 @@ typing = [
 [tool.hatch.version]
 source = "vcs"
 
+[tool.uv]
+prerelease = "allow"
+preview = true
+required-version = ">=0.8"
+
 [tool.ruff]
 line-length = 88
 lint.select = [
@@ -154,8 +159,3 @@ warn_no_return = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
-
-[tool.uv]
-prerelease = "allow"
-preview = true
-required-version = ">=0.8"
