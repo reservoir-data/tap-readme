@@ -52,7 +52,7 @@ dev = [
 ]
 testing = [
   "deptry>=0.12",
-  "pytest~=8.0",
+  "pytest~=9.0",
   "singer-sdk[testing]",
 ]
 typing = [
