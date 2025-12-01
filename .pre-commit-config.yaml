@@ -21,7 +21,7 @@ repos:
       - id: pyproject-fmt
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: "v0.14.6"
+    rev: "v0.14.7"
     hooks:
       - id: ruff
         name: Ruff lint
@@ -30,7 +30,7 @@ repos:
         name: Ruff format
 
   - repo: https://github.com/pre-commit/pre-commit
-    rev: v4.4.0
+    rev: v4.5.0
     hooks:
       - id: validate_manifest
 
