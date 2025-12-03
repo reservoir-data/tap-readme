@@ -112,7 +112,7 @@ class Changelogs(ReadMeStream):
         th.Property(
             "metadata",
             th.ObjectType(
-                th.Property("image", th.ArrayType(th.StringType)),
+                th.Property("image", th.ArrayType(th.StringType)),  # ty: ignore[invalid-argument-type]
                 th.Property("title", th.StringType),
                 th.Property("description", th.StringType),
                 th.Property("keywords", th.StringType),
