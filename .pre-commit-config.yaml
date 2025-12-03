@@ -24,10 +24,8 @@ repos:
     rev: "v0.14.7"
     hooks:
       - id: ruff
-        name: Ruff lint
         args: [--fix, --exit-non-zero-on-fix, --show-fixes]
       - id: ruff-format
-        name: Ruff format
 
   - repo: https://github.com/pre-commit/pre-commit
     rev: v4.5.0
@@ -43,3 +41,8 @@ repos:
       language: python
       additional_dependencies:
       - pyjson5==2.0.0
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.11
+    hooks:
+    - id: uv-lock
