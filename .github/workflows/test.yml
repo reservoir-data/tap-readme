@@ -10,6 +10,10 @@ on:
   # Run weekly on Monday at 12:00 PM UTC
   - cron: "0 12 * * 1"
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
 env:
   FORCE_COLOR: "1"
   # renovate: datasource=pypi depName=prek
@@ -73,37 +77,28 @@ jobs:
       run: |
         uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e ${{ matrix.python-version }}
 
-  typing:
+  static:
     runs-on: ubuntu-24.04
-    name: Typing checks
+    name: Static Analysis
     steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+    - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+      with:
+        fetch-depth: 0
+    - uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
       id: setup-python
     - uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244 # v7.1.4
       with:
         version: ${{ env.UV_VERSION }}
-    - name: Run typing checks
+    - name: Install tools
       env:
         UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-      run: |
-        uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e typing
-
-  dependencies:
-    runs-on: ubuntu-24.04
-    name: Check for missing and transitive dependencies
-    steps:
-    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
-    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
-      id: setup-python
-    - uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244 # v7.1.4
-      with:
-        version: ${{ env.UV_VERSION }}
-    - name: Run dependency checks
-      env:
-        UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
-      run: |
-        uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e dependencies
+      run: >
+          uv tool install
+          --with tox-uv==${{ env.TOX_UV_VERSION }}
+          --with tox==${{ env.TOX_VERSION }}
+          tox
+    - name: Static Analysis
+      run: tox -m static
 
   pre-commit:
     runs-on: ubuntu-24.04

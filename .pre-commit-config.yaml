@@ -46,3 +46,4 @@ repos:
     rev: 0.9.11
     hooks:
     - id: uv-lock
+    - id: uv-sync
