@@ -3,22 +3,7 @@ name: Test tap-readme
 on:
   push:
     branches: [main]
-    paths:
-    - tap_readme/**
-    - tests/**
-    - pyproject.toml
-    - tox.ini
-    - uv.lock
-    - .github/workflows/test.yml
   pull_request:
-    branches: [main]
-    paths:
-    - tap_readme/**
-    - tests/**
-    - pyproject.toml
-    - tox.ini
-    - uv.lock
-    - .github/workflows/test.yml
   workflow_dispatch:
   schedule:
   # Run weekly on Monday at 12:00 PM UTC
@@ -36,8 +21,29 @@ env:
   TOX_UV_VERSION: 1.29.0
 
 jobs:
-  tests:
+  files-changed:
     runs-on: ubuntu-24.04
+    name: Detect file changes
+    outputs:
+      runtime: ${{ steps.changes.outputs.runtime }}
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: dorny/paths-filter@de90cc6fb38fc0963ad72b210f1f284cd68cea36 # v3.0.2
+      id: changes
+      with:
+        filters: |
+          runtime:
+            - 'tap_readme/**'
+            - 'tests/**'
+            - 'pyproject.toml'
+            - 'uv.lock'
+            - '.github/workflows/test.yml'
+
+  tests:
+    if: ${{ needs.files-changed.outputs.runtime == 'true' }}
+    needs: [files-changed]
+    runs-on: ubuntu-24.04
+    name: Integration tests
     strategy:
       fail-fast: false
       matrix:
@@ -52,7 +58,7 @@ jobs:
         - { environment: "typing",       python-version: "3.x" }
 
     steps:
-    - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
     - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
       id: setup-python
       with:
@@ -70,8 +76,9 @@ jobs:
 
   pre-commit:
     runs-on: ubuntu-24.04
+    name: pre-commit hooks
     steps:
-    - uses: actions/checkout@1af3b93b6815bc44a9784bd300feb67ff0d1eeb3 # v6.0.0
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
 
     - name: Install the latest version of uv
       uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244 # v7.1.4
