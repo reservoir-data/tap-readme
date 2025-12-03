@@ -47,6 +47,7 @@ jobs:
     name: Integration tests
     strategy:
       fail-fast: false
+      max-parallel: 2
       matrix:
         python-version:
         - "3.10"
@@ -54,9 +55,6 @@ jobs:
         - "3.12"
         - "3.13"
         - "3.14"
-        include:
-        - { environment: "dependencies", python-version: "3.x" }
-        - { environment: "typing",       python-version: "3.x" }
 
     steps:
     - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
@@ -73,7 +71,39 @@ jobs:
         UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
         TAP_README_API_KEY: ${{ secrets.TAP_README_API_KEY }}
       run: |
-        uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e ${{ matrix.environment || matrix.python-version }}
+        uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e ${{ matrix.python-version }}
+
+  typing:
+    runs-on: ubuntu-24.04
+    name: Typing checks
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+      id: setup-python
+    - uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244 # v7.1.4
+      with:
+        version: ${{ env.UV_VERSION }}
+    - name: Run typing checks
+      env:
+        UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
+      run: |
+        uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e typing
+
+  dependencies:
+    runs-on: ubuntu-24.04
+    name: Check for missing and transitive dependencies
+    steps:
+    - uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+    - uses: actions/setup-python@83679a892e2d95755f2dac6acb0bfd1e9ac5d548 # v6.1.0
+      id: setup-python
+    - uses: astral-sh/setup-uv@1e862dfacbd1d6d858c55d9b792c756523627244 # v7.1.4
+      with:
+        version: ${{ env.UV_VERSION }}
+    - name: Run dependency checks
+      env:
+        UV_PYTHON: ${{ steps.setup-python.outputs.python-path }}
+      run: |
+        uvx --with tox-uv==${{ env.TOX_UV_VERSION }} --with tox==${{ env.TOX_VERSION }} tox -e dependencies
 
   pre-commit:
     runs-on: ubuntu-24.04
