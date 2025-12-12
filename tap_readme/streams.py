@@ -2,17 +2,11 @@
 
 from __future__ import annotations
 
-import sys
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, override
 
 from singer_sdk import typing as th
 
 from tap_readme.client import ReadMeStream
-
-if sys.version_info >= (3, 12):
-    from typing import override
-else:
-    from typing_extensions import override
 
 if TYPE_CHECKING:
     from singer_sdk.helpers.types import Context
