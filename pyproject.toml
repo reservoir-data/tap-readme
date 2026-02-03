@@ -128,16 +128,6 @@ env_list = [
   "3.12",
 ]
 
-[tool.tox.labels]
-test = [ "3.14", "3.13", "3.12" ]
-static = [ "dependencies", "typing" ]
-
-[tool.tox.env_run_base]
-runner = "uv-venv-lock-runner"
-pass_env = [ "TAP_README_*" ]
-dependency_groups = [ "testing" ]
-commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
-
 [tool.tox.env.dependencies]
 commands = [ [ "deptry", "." ] ]
 
@@ -150,6 +140,16 @@ commands = [
   [ "mypy", "--strict", "tap_readme", "tests" ],
   [ "ty", "check" ],
 ]
+
+[tool.tox.env_run_base]
+runner = "uv-venv-lock-runner"
+pass_env = [ "TAP_README_*" ]
+dependency_groups = [ "testing" ]
+commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
+
+[tool.tox.labels]
+test = [ "3.14", "3.13", "3.12" ]
+static = [ "dependencies", "typing" ]
 
 [tool.mypy]
 warn_redundant_casts = true
