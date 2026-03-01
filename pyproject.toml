@@ -58,13 +58,13 @@ typing = [
   "types-requests",
 ]
 
-[tool.hatch.version]
-source = "vcs"
+[tool.hatch]
+version.source = "vcs"
 
 [tool.uv]
+required-version = ">=0.8"
 prerelease = "allow"
 preview = true
-required-version = ">=0.8"
 
 [tool.ruff]
 line-length = 88
@@ -95,14 +95,12 @@ lint.isort.required-imports = [
 ]
 lint.pydocstyle.convention = "google"
 
-[tool.deptry.package_module_name_map]
-mypy = "mypy"
-pytest = "pytest"
-ty = "ty"
-types-requests = "requests"
-
-[tool.deptry.per_rule_ignores]
-DEP002 = [
+[tool.deptry]
+package_module_name_map.mypy = "mypy"
+package_module_name_map.pytest = "pytest"
+package_module_name_map.ty = "ty"
+package_module_name_map.types-requests = "requests"
+per_rule_ignores.DEP002 = [
   "deptry",
   "mypy",
   "pytest",
@@ -111,8 +109,8 @@ DEP002 = [
 [tool.pyproject-fmt]
 max_supported_python = "3.14"
 
-[tool.pytest.ini_options]
-addopts = "-vvv"
+[tool.pytest]
+ini_options.addopts = "-vvv"
 
 [tool.tox]
 min_version = "4.22"
@@ -127,29 +125,19 @@ env_list = [
   "3.13",
   "3.12",
 ]
-
-[tool.tox.env.dependencies]
-commands = [ [ "deptry", "." ] ]
-
-[tool.tox.env.sync]
-commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
-
-[tool.tox.env.typing]
-dependency_groups = [ "testing", "typing" ]
-commands = [
+env.dependencies.commands = [ [ "deptry", "." ] ]
+env.sync.commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
+env.typing.dependency_groups = [ "testing", "typing" ]
+env.typing.commands = [
   [ "mypy", "--strict", "tap_readme", "tests" ],
   [ "ty", "check" ],
 ]
-
-[tool.tox.env_run_base]
-runner = "uv-venv-lock-runner"
-pass_env = [ "TAP_README_*" ]
-dependency_groups = [ "testing" ]
-commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
-
-[tool.tox.labels]
-test = [ "3.14", "3.13", "3.12" ]
-static = [ "dependencies", "typing" ]
+env_run_base.runner = "uv-venv-lock-runner"
+env_run_base.pass_env = [ "TAP_README_*" ]
+env_run_base.dependency_groups = [ "testing" ]
+env_run_base.commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
+labels.test = [ "3.14", "3.13", "3.12" ]
+labels.static = [ "dependencies", "typing" ]
 
 [tool.mypy]
 warn_redundant_casts = true
