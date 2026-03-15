@@ -671,8 +671,8 @@ wheels = [
 name = "tap-readme"
 source = { editable = "." }
 dependencies = [
-    { name = "requests" },
     { name = "singer-sdk" },
+    { name = "toolz" },
 ]
 
 [package.dev-dependencies]
@@ -697,8 +697,8 @@ typing = [
 
 [package.metadata]
 requires-dist = [
-    { name = "requests", specifier = "~=2.32.0" },
     { name = "singer-sdk", specifier = "~=0.54.0a4" },
+    { name = "toolz", specifier = ">=1.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -719,6 +719,15 @@ typing = [
     { name = "mypy", specifier = "~=1.19.0" },
     { name = "ty", specifier = ">=0.0.23" },
     { name = "types-requests" },
+]
+
+[[package]]
+name = "toolz"
+version = "1.1.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/11/d6/114b492226588d6ff54579d95847662fc69196bdeec318eb45393b24c192/toolz-1.1.0.tar.gz", hash = "sha256:27a5c770d068c110d9ed9323f24f1543e83b2f300a687b7891c1a6d56b697b5b", size = 52613, upload-time = "2025-10-17T04:03:21.661Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/fb/12/5911ae3eeec47800503a238d971e51722ccea5feb8569b735184d5fcdbc0/toolz-1.1.0-py3-none-any.whl", hash = "sha256:15ccc861ac51c53696de0a5d6d4607f99c210739caf987b5d2054f3efed429d8", size = 58093, upload-time = "2025-10-17T04:03:20.435Z" },
 ]
 
 [[package]]
