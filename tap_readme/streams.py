@@ -2,133 +2,121 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, override
+import importlib.resources
+from typing import TYPE_CHECKING, Any, NamedTuple, cast, override
 
-from singer_sdk import typing as th
+from singer_sdk import OpenAPISchema, Stream, StreamSchema
+from toolz import get_in
 
 from tap_readme.client import ReadMeStream
 
 if TYPE_CHECKING:
+    from collections.abc import Generator
+
     from singer_sdk.helpers.types import Context
+
+
+class StreamKey(NamedTuple):
+    """A key for a stream in the OpenAPI spec."""
+
+    path: str
+    method: str
+    expected_status: int = 200
+    extra_keys: tuple[str | int, ...] = ()
+
+
+class ReadMeOpenAPISource(OpenAPISchema[StreamKey]):
+    """OpenAPI source for PlanetScale API."""
+
+    @override
+    def get_unresolved_schema(self, key: StreamKey) -> dict[str, Any]:
+        return get_in(  # type: ignore[no-any-return,no-untyped-call]
+            [
+                "paths",
+                key.path,
+                key.method,
+                "responses",
+                str(key.expected_status),
+                "content",
+                "application/json",
+                "schema",
+                *key.extra_keys,
+                "properties",
+                "data",
+                "items",
+            ],
+            self.spec,
+        )
+
+    @override
+    def fetch_schema(self, key: StreamKey) -> dict[str, Any]:
+        schema = super().fetch_schema(key)
+        if key.path == Categories.path:
+            schema["properties"]["branch"] = {"type": "string"}
+        return schema
+
+
+class SchemaFromPath(StreamSchema[StreamKey]):
+    """A stream schema from a path in the OpenAPI spec."""
+
+    @override
+    def get_stream_schema(
+        self,
+        stream: Stream,
+        stream_class: type[Stream],
+    ) -> dict[str, Any]:
+        stream = cast("ReadMeStream", stream)
+        key = StreamKey(
+            path=stream.path,
+            method=stream.http_method.lower(),
+            expected_status=200,
+            extra_keys=stream.extra_keys,
+        )
+        return self.schema_source.get_schema(key)
+
+
+OPENAPI = ReadMeOpenAPISource(importlib.resources.files("tap_readme") / "openapi.json")
+
+
+class Branches(ReadMeStream):
+    """Branches stream."""
+
+    name = "branches"
+    path = "/branches"
+    primary_keys = ("name",)
+    replication_key = None
+
+    extra_keys = ("anyOf", 0)
+    schema = SchemaFromPath(OPENAPI)
+
+    @override
+    def generate_child_contexts(
+        self,
+        record: dict[str, Any],
+        context: Context | None,
+    ) -> Generator[dict[str, Any] | None, None, None]:
+        yield {"branch": record["name"], "section": "guides"}
+        yield {"branch": record["name"], "section": "reference"}
 
 
 class Categories(ReadMeStream):
     """Categories stream."""
 
-    name = "categories"
-    path = "/v1/categories"
-    primary_keys = ("id",)
+    name = "Categories"
+    path = "/branches/{branch}/categories/{section}"
+    primary_keys = ("title",)
     replication_key = None
+    parent_stream_type = Branches
 
-    schema = th.PropertiesList(
-        th.Property("title", th.StringType),
-        th.Property("slug", th.StringType),
-        th.Property("order", th.IntegerType),
-        th.Property("reference", th.BooleanType),
-        th.Property("version", th.StringType),
-        th.Property("project", th.StringType),
-        th.Property("createdAt", th.DateTimeType),
-        th.Property("type", th.StringType),
-        th.Property("id", th.StringType),
-        th.Property("_id", th.StringType),
-    ).to_dict()
-
-    @override
-    def get_child_context(
-        self,
-        record: dict[str, Any],
-        context: Context | None,
-    ) -> dict[str, Any] | None:
-        return {
-            "category_slug": record["slug"],
-        }
-
-
-class CategoryDocs(ReadMeStream):
-    """Category docs stream."""
-
-    parent_stream_type = Categories
-
-    name = "category_docs"
-    path = "/v1/categories/{category_slug}/docs"
-    primary_keys = ("_id",)
-    replication_key = None
-
-    schema = th.PropertiesList(
-        th.Property("_id", th.StringType),
-        th.Property("title", th.StringType),
-        th.Property("slug", th.StringType),
-        th.Property("order", th.IntegerType),
-        th.Property("hidden", th.BooleanType),
-        th.Property("children", th.ArrayType(th.ObjectType())),
-    ).to_dict()
-
-
-class Metadata(ReadMeStream):
-    """API specification metadata stream."""
-
-    name = "metadata"
-    path = "/v1/api-specification"
-    primary_keys = ("id",)
-    replication_key = None
-
-    schema = th.PropertiesList(
-        th.Property("title", th.StringType),
-        th.Property("source", th.StringType),
-        th.Property("_id", th.StringType),
-        th.Property("lastSynced", th.DateTimeType),
-        th.Property("version", th.StringType),
-        th.Property(
-            "category",
-            th.ObjectType(
-                th.Property("title", th.StringType),
-                th.Property("slug", th.StringType),
-                th.Property("order", th.IntegerType),
-                th.Property("_id", th.StringType),
-                th.Property("type", th.StringType),
-                th.Property("id", th.StringType),
-            ),
-        ),
-        th.Property("type", th.StringType),
-        th.Property("id", th.StringType),
-    ).to_dict()
+    schema = SchemaFromPath(OPENAPI)
 
 
 class Changelogs(ReadMeStream):
     """Changelogs stream."""
 
     name = "changelogs"
-    path = "/v1/changelogs"
-    primary_keys = ("_id",)
+    path = "/changelogs"
+    primary_keys = ("title",)
     replication_key = None
 
-    schema = th.PropertiesList(
-        th.Property(
-            "metadata",
-            th.ObjectType(
-                th.Property("image", th.ArrayType(th.StringType)),
-                th.Property("title", th.StringType),
-                th.Property("description", th.StringType),
-                th.Property("keywords", th.StringType),
-            ),
-        ),
-        th.Property(
-            "algolia",
-            th.ObjectType(
-                th.Property("recordCount", th.IntegerType),
-                th.Property("publishPending", th.BooleanType),
-            ),
-        ),
-        th.Property("title", th.StringType),
-        th.Property("slug", th.StringType),
-        th.Property("body", th.StringType),
-        th.Property("type", th.StringType),
-        th.Property("hidden", th.BooleanType),
-        th.Property("revision", th.IntegerType),
-        th.Property("_id", th.StringType),
-        th.Property("pendingAlgoliaPublish", th.BooleanType),
-        th.Property("createdAt", th.DateTimeType),
-        th.Property("updatedAt", th.DateTimeType),
-        th.Property("__v", th.IntegerType),
-        th.Property("html", th.StringType),
-    ).to_dict()
+    schema = SchemaFromPath(OPENAPI)

@@ -28,8 +28,8 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "requests~=2.32.0",
   "singer-sdk~=0.54.0a4",
+  "toolz>=1.1",
 ]
 [[project.authors]]
 name = "Edgar Ramírez-Mondragón"
@@ -70,7 +70,7 @@ prerelease = "allow"
 preview = true
 
 [tool.ruff]
-line-length = 88
+line-length = 120
 [tool.ruff.lint]
 select = [
   "ALL",
@@ -122,7 +122,11 @@ addopts = [
   "--strict-config",
   "--strict-markers",
 ]
-filterwarnings = [ "error" ]
+filterwarnings = [
+  "error",
+  "once:No records were available to test:UserWarning",
+  "once:Fields in transformed catalog but not in records:UserWarning",
+]
 log_level = "INFO"
 minversion = "9"
 strict = true
@@ -162,6 +166,7 @@ static = [ "dependencies", "typing" ]
 [tool.mypy]
 strict = true
 enable_error_code = [ "ignore-without-code", "redundant-expr", "truthy-bool" ]
+follow_untyped_imports = true
 warn_redundant_casts = true
 warn_return_any = true
 warn_no_return = true
