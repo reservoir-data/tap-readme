@@ -707,7 +707,7 @@ dev = [
     { name = "mypy", specifier = "~=1.19.0" },
     { name = "pytest", specifier = "~=9.0" },
     { name = "singer-sdk", extras = ["testing"] },
-    { name = "ty", specifier = ">=0.0.1a21" },
+    { name = "ty", specifier = ">=0.0.23" },
     { name = "types-requests" },
 ]
 testing = [
@@ -717,7 +717,7 @@ testing = [
 ]
 typing = [
     { name = "mypy", specifier = "~=1.19.0" },
-    { name = "ty", specifier = ">=0.0.1a21" },
+    { name = "ty", specifier = ">=0.0.23" },
     { name = "types-requests" },
 ]
 
