@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import TYPE_CHECKING, Any, override
 from urllib.parse import ParseResult, parse_qsl
 
-from requests.auth import HTTPBasicAuth
 from singer_sdk import RESTStream
+from singer_sdk.authenticators import BearerTokenAuthenticator
 from singer_sdk.pagination import BaseHATEOASPaginator
 
 if TYPE_CHECKING:
@@ -25,15 +25,17 @@ class ReadMePaginator(BaseHATEOASPaginator):
 class ReadMeStream(RESTStream[ParseResult]):
     """ReadMe.com stream class."""
 
-    url_base = "https://dash.readme.com/api"
-    records_jsonpath = "$[*]"
+    url_base = "https://api.readme.com/v2"
+    records_jsonpath = "$.data[*]"
 
     _page_size = 100
 
+    extra_keys: tuple[str | int, ...] = ()
+
     @override
     @property
-    def authenticator(self) -> HTTPBasicAuth:
-        return HTTPBasicAuth(self.config["api_key"], "")
+    def authenticator(self) -> BearerTokenAuthenticator:
+        return BearerTokenAuthenticator(token=self.config["api_key"])
 
     @override
     def get_url_params(
@@ -41,15 +43,7 @@ class ReadMeStream(RESTStream[ParseResult]):
         context: Context | None,
         next_page_token: ParseResult | None,
     ) -> dict[str, Any]:
-        """Get URL query parameters.
-
-        Args:
-            context: Stream sync context.
-            next_page_token: Next offset.
-
-        Returns:
-            Mapping of URL query parameters.
-        """
+        """Get URL query parameters."""
         params: dict[str, Any] = {"perPage": self._page_size}
 
         if next_page_token:
