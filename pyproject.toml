@@ -38,7 +38,7 @@ email = "edgarrm358@gmail.com"
 name = "Edgar Ramírez-Mondragón"
 email = "edgarrm358@gmail.com"
 [project.scripts]
-"tap-readme" = "tap_readme.tap:TapReadMe.cli"
+tap-readme = "tap_readme.tap:TapReadMe.cli"
 [project.urls]
 Documentation = "https://github.com/reservoir-data/tap-readme#readme"
 Homepage = "https://github.com/reservoir-data/tap-readme"
@@ -115,6 +115,17 @@ DEP002 = [
 [tool.pyproject-fmt]
 table_format = "long"
 
+[tool.mypy]
+strict = true
+enable_error_code = [ "ignore-without-code", "redundant-expr", "truthy-bool" ]
+follow_untyped_imports = true
+warn_redundant_casts = true
+warn_return_any = true
+warn_no_return = true
+warn_unreachable = true
+warn_unused_configs = true
+warn_unused_ignores = true
+
 [tool.pytest]
 addopts = [
   "-vvv",
@@ -162,14 +173,3 @@ commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = 
 [tool.tox.labels]
 test = [ "3.*" ]
 static = [ "dependencies", "typing" ]
-
-[tool.mypy]
-strict = true
-enable_error_code = [ "ignore-without-code", "redundant-expr", "truthy-bool" ]
-follow_untyped_imports = true
-warn_redundant_casts = true
-warn_return_any = true
-warn_no_return = true
-warn_unreachable = true
-warn_unused_configs = true
-warn_unused_ignores = true
