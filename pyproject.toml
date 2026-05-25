@@ -15,10 +15,8 @@ keywords = [
   "singer.io",
 ]
 license = "Apache-2.0"
-license-files = [ "LICENSE" ]
 requires-python = ">=3.12"
 classifiers = [
-  "License :: OSI Approved :: Apache Software License",
   "Programming Language :: Python :: 3 :: Only",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
@@ -28,7 +26,7 @@ dynamic = [
   "version",
 ]
 dependencies = [
-  "singer-sdk~=0.54.0a4",
+  "singer-sdk~=0.54.2",
   "toolz>=1.1",
 ]
 [[project.authors]]
@@ -57,17 +55,12 @@ testing = [
 typing = [
   "mypy~=1.19.0",
   "ty>=0.0.23",
-  "types-requests",
+  { include-group = "testing" },
 ]
 
-[tool.hatch]
 [tool.hatch.version]
+fallback-version = "0.1.0.dev0"
 source = "vcs"
-
-[tool.uv]
-required-version = ">=0.10"
-prerelease = "allow"
-preview = true
 
 [tool.ruff]
 line-length = 120
@@ -91,47 +84,35 @@ unfixable = [
   "ERA001", # commented-out-code
 ]
 flake8-annotations.allow-star-arg-any = true
-isort.known-first-party = [
-  "tap_readme",
-]
-isort.required-imports = [
-  "from __future__ import annotations",
-]
 pydocstyle.convention = "google"
 
-[tool.deptry]
 [tool.deptry.package_module_name_map]
 mypy = "mypy"
-pytest = "pytest"
 ty = "ty"
-types-requests = "requests"
-[tool.deptry.per_rule_ignores]
-DEP002 = [
-  "deptry",
-  "mypy",
-  "pytest",
-]
 
 [tool.pyproject-fmt]
 table_format = "long"
 
 [tool.mypy]
-strict = true
-enable_error_code = [ "ignore-without-code", "redundant-expr", "truthy-bool" ]
+enable_error_code = [
+  "exhaustive-match",
+  "ignore-without-code",
+  "redundant-expr",
+  "truthy-bool",
+]
 follow_untyped_imports = true
+strict = true
+warn_no_return = true
 warn_redundant_casts = true
 warn_return_any = true
-warn_no_return = true
 warn_unreachable = true
 warn_unused_configs = true
 warn_unused_ignores = true
 
 [tool.pytest]
 addopts = [
-  "-vvv",
+  "-v",
   "-ra",
-  "--strict-config",
-  "--strict-markers",
 ]
 filterwarnings = [
   "error",
@@ -144,32 +125,36 @@ strict = true
 testpaths = [ "tests" ]
 
 [tool.tox]
-min_version = "4.43"
 requires = [
-  "tox",
-  "tox-uv",
+  "tox>=4.53",
+  "tox-uv>=1.35",
 ]
 env_list = [
   "dependencies",
   "typing",
-  { product = [
-    { prefix = "3.", start = 12 },
-  ] },
+  { prefix = "3.", start = 12 },
 ]
-[tool.tox.env]
-dependencies.commands = [ [ "deptry", "." ] ]
-sync.commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
-typing.dependency_groups = [ "testing", "typing" ]
-typing.commands = [
+[tool.tox.env.dependencies]
+description = "check for unused, missing and transitive dependencies"
+labels = [ "check" ]
+dependency_groups = [ "testing" ]
+commands = [ [ "deptry", "." ] ]
+[tool.tox.env.sync]
+description = "run tap with sample data"
+base_python_file = [ ".python-version" ]
+commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
+[tool.tox.env.typing]
+description = "type checks"
+labels = [ "check" ]
+dependency_groups = [ "testing", "typing" ]
+commands = [
   [ "mypy", "tap_readme", "tests" ],
   [ "ty", "check" ],
 ]
 
 [tool.tox.env_run_base]
+description = "run tests on Python {py_dot_ver}"
 runner = "uv-venv-lock-runner"
 pass_env = [ "TAP_README_*" ]
 dependency_groups = [ "testing" ]
 commands = [ [ "pytest", { replace = "posargs", default = [ "tests" ], extend = true } ] ]
-[tool.tox.labels]
-test = [ "3.*" ]
-static = [ "dependencies", "typing" ]

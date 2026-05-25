@@ -19,7 +19,7 @@ class ReadMePaginator(BaseHATEOASPaginator):
 
     def get_next_url(self, response: Response) -> str | None:
         """Return the next page URL from a response. If no next page, return None."""
-        return response.links.get("next", {}).get("url")  # type: ignore[no-any-return]
+        return response.links.get("next", {}).get("url")
 
 
 class ReadMeStream(RESTStream[ParseResult]):
