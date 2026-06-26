@@ -141,8 +141,8 @@ commands = [ [ "deptry", "." ] ]
 labels = [ "check" ]
 [tool.tox.env.sync]
 description = "run tap with sample data"
-commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
 base_python_file = [ ".python-version" ]
+commands = [ [ "tap-readme", { replace = "posargs", default = [ "--config=ENV" ], extend = true } ] ]
 [tool.tox.env.typing]
 description = "type checks"
 dependency_groups = [ "testing", "typing" ]
