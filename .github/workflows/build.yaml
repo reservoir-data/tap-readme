@@ -1,19 +1,24 @@
 name: Build and publish
 
+permissions:
+  contents: read
+
 on:
   push:
     tags: ["*"]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build:
     name: Build wheel and sdist
     runs-on: ubuntu-24.04
-    permissions:
-      contents: read
     outputs:
       package_version: ${{ steps.baipp.outputs.package_version }}
     steps:
-    - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+    - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       with:
         persist-credentials: false
     - uses: hynek/build-and-inspect-python-package@d44ca7d91762de7a7d5436ddae667c6da6d1c3df # v2.18.0
@@ -24,8 +29,7 @@ jobs:
     runs-on: ubuntu-24.04
     needs: build
     permissions:
-      contents: write
-      id-token: write
+      id-token: write # Required for OIDC authentication with PyPI.
     environment:
       name: pypi
       url: https://pypi.org/project/tap-readme/${{ needs.build.outputs.package_version }}
@@ -35,10 +39,4 @@ jobs:
       with:
         name: Packages
         path: dist
-    - uses: svenstaro/upload-release-action@29e53e917877a24fad85510ded594ab3c9ca12de # 2.11.5
-      with:
-        file: dist/*.whl
-        tag: ${{ github.ref }}
-        overwrite: true
-        file_glob: true
     - uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0

@@ -3,6 +3,9 @@ ci:
   autofix_commit_msg: "style: pre-commit fixes"
   autoupdate_schedule: monthly
   autoupdate_commit_msg: 'chore(deps): update pre-commit hooks'
+  skip:
+  - uv-audit
+  - uv-lock
 
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -28,8 +31,9 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.24
+    rev: 0.11.25
     hooks:
+    - id: uv-audit
     - id: uv-lock
     - id: uv-sync
 
