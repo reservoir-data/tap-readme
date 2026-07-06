@@ -31,14 +31,14 @@ repos:
       - id: ruff-format
 
   - repo: https://github.com/astral-sh/uv-pre-commit
-    rev: 0.11.25
+    rev: 0.11.26
     hooks:
     - id: uv-audit
     - id: uv-lock
     - id: uv-sync
 
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.37.3
+    rev: 0.37.4
     hooks:
     - id: check-github-workflows
     - id: check-meltano
